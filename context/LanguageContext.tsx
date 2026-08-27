@@ -2,17 +2,23 @@
 
 import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
+import { translations } from "@/lib/translations";
+import type { T } from "@/lib/translations";
 
 export type Lang = "es" | "en";
 
 interface LanguageContextValue {
   lang: Lang;
   setLang: (l: Lang) => void;
+  t: T;
+  toggle: () => void;
 }
 
 const LanguageContext = createContext<LanguageContextValue>({
   lang: "es",
   setLang: () => {},
+  t: translations.es,
+  toggle: () => {},
 });
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
@@ -28,8 +34,10 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("portfolio-lang", l);
   };
 
+  const toggle = () => setLang(lang === "es" ? "en" : "es");
+
   return (
-    <LanguageContext.Provider value={{ lang, setLang }}>
+    <LanguageContext.Provider value={{ lang, setLang, t: translations[lang], toggle }}>
       {children}
     </LanguageContext.Provider>
   );

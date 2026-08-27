@@ -8,7 +8,30 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/projects/substrack)",
       "Bash(curl -s http://localhost:3000/projects/substrack)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/projects/habita)",
-      "Bash(curl -s -o /dev/null -w \"habita:%{http_code} substrack:%{http_code} home:%{http_code}\" http://localhost:3000/projects/habita http://localhost:3000/projects/substrack http://localhost:3000)"
+      "Bash(curl -s -o /dev/null -w \"habita:%{http_code} substrack:%{http_code} home:%{http_code}\" http://localhost:3000/projects/habita http://localhost:3000/projects/substrack http://localhost:3000)",
+      "Bash(npx tsc *)",
+      "Bash(git config *)",
+      "Bash(npx next *)",
+      "Bash(echo \"PID=$!\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3456/)",
+      "Bash(npx playwright *)",
+      "Bash(node *)",
+      "Bash(npm install *)",
+      "Bash(/tmp/pw/node_modules/.bin/playwright install *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\juanj\\\\portfolio-juanjose\" -Recurse -Directory)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "PowerShell(head *)",
+      "PowerShell(Get-ChildItem *)",
+      "Bash(npm run *)",
+      "Bash(curl -s -o /dev/null -w \"habita: %{http_code}\\\\n\" http://localhost:3000/projects/habita)",
+      "Bash(curl -s -o /dev/null -w \"substrack: %{http_code}\\\\n\" http://localhost:3000/projects/substrack)",
+      "Bash(curl -s -o /dev/null -w \"esdesign: %{http_code}\\\\n\" http://localhost:3000/projects/esdesign)",
+      "Bash(pkill -f \"next dev\")",
+      "mcp__Claude_Preview__preview_start",
+      "WebFetch(domain:claude.ai)",
+      "PowerShell(Copy-Item \"C:\\\\Users\\\\juanj\\\\Downloads\\\\1x\\\\Artboard 17.png\" \"C:\\\\Users\\\\juanj\\\\portfolio-juanjose\\\\public\\\\Images\\\\Branding\\\\Nurish\\\\Artboard 17.png\")",
+      "PowerShell(Copy-Item \"C:\\\\Users\\\\juanj\\\\Downloads\\\\1x\\\\Artboard 23.png\" \"C:\\\\Users\\\\juanj\\\\portfolio-juanjose\\\\public\\\\Images\\\\Branding\\\\Nurish\\\\Artboard 23.png\" -ErrorAction SilentlyContinue)",
+      "Bash(git add *)"
     ]
   }
 }
