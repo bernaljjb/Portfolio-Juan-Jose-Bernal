@@ -12,8 +12,8 @@ const CSS = `
     --paper: #EFEBE1;
     --dark: #11151D;
     --display: 'Bricolage Grotesque', sans-serif;
-    --body: 'Space Grotesk', sans-serif;
-    --mono: 'Space Mono', monospace;
+    --body: 'Satoshi', sans-serif;
+    --mono: 'Hubot Sans', sans-serif;
     background: var(--paper);
     color: var(--ink);
     font-family: var(--body);
@@ -50,15 +50,25 @@ const CSS = `
 
   /* lang toggle */
   .jjb-lang {
-    display: flex; align-items: center;
-    border: 2px solid var(--ink);
+    display: flex; align-items: center; position: relative;
+    background: #e0dbd0; border-radius: 20px; padding: 3px;
   }
+  .jjb-lang-slider {
+    position: absolute; top: 3px; bottom: 3px;
+    width: calc(50% - 3px); border-radius: 16px;
+    background: var(--ink);
+    transition: transform .25s cubic-bezier(.4,0,.2,1);
+    pointer-events: none;
+  }
+  .jjb-lang[data-lang="en"] .jjb-lang-slider { transform: translateX(100%); }
   .jjb-lang-btn {
+    position: relative; z-index: 1;
     background: transparent; border: none; cursor: pointer;
     font-family: var(--mono); font-size: 11px; letter-spacing: .08em;
-    padding: 5px 9px; color: var(--ink); transition: background .15s, color .15s;
+    padding: 4px 10px; border-radius: 16px;
+    color: var(--ink); transition: color .25s;
   }
-  .jjb-lang-btn.active { background: var(--ink); color: var(--paper); }
+  .jjb-lang-btn.active { color: var(--paper); }
 
   /* hamburger */
   .jjb-hamburger {
@@ -106,7 +116,7 @@ const CSS = `
   }
   .jjb-h1 {
     font-family: var(--display); font-weight: 800;
-    font-size: clamp(72px, 16vw, 240px);
+    font-size: clamp(56px, 10vw, 160px);
     line-height: .82; letter-spacing: -.045em; margin: 0; color: var(--ink);
   }
   .jjb-h1-line { display: block; overflow: hidden; }
@@ -129,7 +139,7 @@ const CSS = `
     display: inline-block; text-decoration: none;
     font-family: var(--mono); font-size: 13px; letter-spacing: .06em;
     text-transform: uppercase; background: var(--acc); color: var(--paper);
-    padding: 10px 18px;
+    padding: 10px 18px; border-radius: 6px;
     transform: rotate(-2deg);
     transition: transform .25s, background .2s;
   }
@@ -139,7 +149,7 @@ const CSS = `
   /* ── MARQUEE ── */
   .jjb-marquee {
     border-bottom: 3px solid var(--ink); background: var(--acc);
-    overflow: hidden; white-space: nowrap; padding: 12px 0;
+    overflow: hidden; white-space: nowrap; padding: 6px 0;
   }
   .jjb-marquee-track {
     display: inline-flex; width: max-content;
@@ -147,8 +157,8 @@ const CSS = `
   }
   .jjb-marquee:hover .jjb-marquee-track { animation-play-state: paused; }
   .jjb-marquee-item {
-    font-family: var(--display); font-weight: 800; font-size: 38px;
-    color: var(--paper); padding: 0 26px; letter-spacing: -.01em;
+    font-family: var(--mono); font-weight: 400; font-size: 11px;
+    color: var(--paper); padding: 0 16px; letter-spacing: .12em;
   }
 
   /* ── FEATURED HABITA ── */
@@ -169,7 +179,7 @@ const CSS = `
   }
   .jjb-featured-name {
     font-family: var(--display); font-weight: 800;
-    font-size: clamp(56px, 9vw, 128px); line-height: .86;
+    font-size: clamp(40px, 5vw, 80px); line-height: .9;
     letter-spacing: -.03em; margin: 0 0 22px; color: var(--paper);
   }
   .jjb-featured-desc {
@@ -179,14 +189,14 @@ const CSS = `
   .jjb-featured-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; }
   .jjb-featured-chip {
     font-family: var(--mono); font-size: 11px; color: var(--paper);
-    border: 1.5px solid #3a3f4a; padding: 6px 12px;
+    border: 1.5px solid #3a3f4a; padding: 6px 12px; border-radius: 20px;
   }
   .jjb-featured-link {
     text-decoration: none; align-self: flex-start;
     display: inline-flex; align-items: center; gap: 12px;
     font-family: var(--mono); font-size: 13px; letter-spacing: .06em;
     text-transform: uppercase; background: #F5C518; color: var(--dark);
-    padding: 13px 22px; transition: transform .25s;
+    padding: 13px 22px; border-radius: 6px; transition: transform .25s;
   }
   .jjb-featured-link:hover { transform: translateX(6px); }
   .jjb-featured-visual {
@@ -239,7 +249,7 @@ const CSS = `
   .jjb-row:hover { background: var(--acc); color: var(--paper); padding-left: 56px; }
   .jjb-row-name {
     font-family: var(--display); font-weight: 700;
-    font-size: clamp(32px, 5vw, 60px); letter-spacing: -.025em; line-height: 1;
+    font-size: clamp(22px, 3vw, 38px); letter-spacing: -.025em; line-height: 1;
   }
   .jjb-row-right {
     display: flex; align-items: center; gap: 18px;
@@ -256,7 +266,7 @@ const CSS = `
   .jjb-branding-card {
     display: flex; align-items: center; justify-content: space-between;
     gap: 16px; margin-bottom: 18px;
-    padding: 14px 16px;
+    padding: 14px 16px; border-radius: 8px;
     background: var(--dark); color: var(--paper);
     text-decoration: none;
     border: 3px solid var(--ink);
@@ -323,7 +333,7 @@ const CSS = `
   }
   .jjb-contact-headline {
     font-family: var(--display); font-weight: 800;
-    font-size: clamp(54px, 12vw, 180px); line-height: .82;
+    font-size: clamp(40px, 7vw, 96px); line-height: .88;
     letter-spacing: -.04em; margin: 0 0 48px; color: var(--paper);
   }
   .jjb-contact-bottom {
@@ -492,7 +502,8 @@ export default function Home() {
           <li><a href="#contact">{t.nav.contact}</a></li>
         </ul>
         <div style={{ display:'flex', alignItems:'center', gap:16 }}>
-          <div className="jjb-lang">
+          <div className="jjb-lang" data-lang={language}>
+            <span className="jjb-lang-slider" />
             <button className={`jjb-lang-btn${language === 'es' ? ' active' : ''}`} onClick={() => setLanguage('es')}>ES</button>
             <button className={`jjb-lang-btn${language === 'en' ? ' active' : ''}`} onClick={() => setLanguage('en')}>EN</button>
           </div>
@@ -542,8 +553,8 @@ export default function Home() {
       {/* MARQUEE */}
       <section className="jjb-marquee" aria-hidden="true">
         <div className="jjb-marquee-track">
-          <span className="jjb-marquee-item">UX RESEARCH&nbsp;✺&nbsp;DESIGN SYSTEMS&nbsp;✺&nbsp;PROTOTYPING&nbsp;✺&nbsp;USER TESTING&nbsp;✺&nbsp;FIGMA&nbsp;✺&nbsp;MOBILE APPS&nbsp;✺&nbsp;</span>
-          <span className="jjb-marquee-item">UX RESEARCH&nbsp;✺&nbsp;DESIGN SYSTEMS&nbsp;✺&nbsp;PROTOTYPING&nbsp;✺&nbsp;USER TESTING&nbsp;✺&nbsp;FIGMA&nbsp;✺&nbsp;MOBILE APPS&nbsp;✺&nbsp;</span>
+          <span className="jjb-marquee-item">UX RESEARCH&nbsp;✺&nbsp;DESIGN SYSTEMS&nbsp;✺&nbsp;PROTOTYPING&nbsp;✺&nbsp;USER TESTING&nbsp;✺&nbsp;FIGMA&nbsp;✺&nbsp;MOBILE APPS&nbsp;✺&nbsp;WIREFRAMING&nbsp;✺&nbsp;INTERACTION DESIGN&nbsp;✺&nbsp;USABILITY&nbsp;✺&nbsp;PRODUCT DESIGN&nbsp;✺&nbsp;ACCESSIBILITY&nbsp;✺&nbsp;DESIGN TOKENS&nbsp;✺&nbsp;</span>
+          <span className="jjb-marquee-item">UX RESEARCH&nbsp;✺&nbsp;DESIGN SYSTEMS&nbsp;✺&nbsp;PROTOTYPING&nbsp;✺&nbsp;USER TESTING&nbsp;✺&nbsp;FIGMA&nbsp;✺&nbsp;MOBILE APPS&nbsp;✺&nbsp;WIREFRAMING&nbsp;✺&nbsp;INTERACTION DESIGN&nbsp;✺&nbsp;USABILITY&nbsp;✺&nbsp;PRODUCT DESIGN&nbsp;✺&nbsp;ACCESSIBILITY&nbsp;✺&nbsp;DESIGN TOKENS&nbsp;✺&nbsp;</span>
         </div>
       </section>
 
@@ -582,7 +593,6 @@ export default function Home() {
       <section className="jjb-index">
         <div className="jjb-index-header">
           <h2 className="jjb-index-label">{t.index.label}</h2>
-          <span className="jjb-index-meta">{t.index.meta}</span>
         </div>
         {t.index.rows.map((row) =>
           row.href ? (
