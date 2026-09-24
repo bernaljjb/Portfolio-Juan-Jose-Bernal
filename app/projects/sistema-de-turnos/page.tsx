@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
 
@@ -166,8 +166,8 @@ const CSS = `
   .st-atomic-block { padding: 40px 32px; border-bottom: 3px solid var(--ink); display: flex; flex-direction: column; justify-content: center; }
   .st-atomic-block:last-child { border-bottom: none; }
   .st-atomic-img-col { padding: 0; display: flex; align-items: stretch; }
-  .st-atomic-img-wrap { position: sticky; top: 80px; width: 100%; height: calc(100vh - 160px); overflow: hidden; border: 3px solid var(--ink); }
-  .st-atomic-img-inner { position: relative; transition: transform .6s cubic-bezier(.25,.46,.45,.94); }
+  .st-atomic-img-wrap { position: sticky; top: 80px; width: 100%; border: 3px solid var(--ink); }
+  .st-atomic-img-inner { position: relative; }
   .st-atomic-img-inner img { width: 100%; display: block; }
   .st-atomic-overlay { position: absolute; inset: 0; pointer-events: none; }
   .st-atomic-overlay-strip {
@@ -565,25 +565,6 @@ export default function SistemaDeTurnosPage() {
   const t = T[lang as Lang];
   const ph = t.phone;
   const [activeLevel, setActiveLevel] = useState(0);
-  const [imgOffset, setImgOffset] = useState(0);
-  const blockRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const imgRef = useRef<HTMLImageElement | null>(null);
-  const wrapRef = useRef<HTMLDivElement | null>(null);
-
-  const sectionStartPct = [0, 0.09, 0.15];
-
-  const handleBlockHover = (idx: number) => {
-    setActiveLevel(idx);
-    const img = imgRef.current;
-    const wrap = wrapRef.current;
-    if (img && wrap) {
-      const imgH = img.offsetHeight;
-      const wrapH = wrap.offsetHeight;
-      const sStart = sectionStartPct[idx] * imgH;
-      const offset = Math.max(0, Math.min(imgH - wrapH, sStart));
-      setImgOffset(offset);
-    }
-  };
 
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -761,7 +742,7 @@ export default function SistemaDeTurnosPage() {
                 <div
                   key={lvl.level}
                   className="st-atomic-block"
-                  onMouseEnter={() => handleBlockHover(i)}
+                  onMouseEnter={() => setActiveLevel(i)}
                   style={{ borderLeft: activeLevel === i ? `4px solid var(--acc)` : '4px solid transparent', transition: 'border-color .3s', cursor: 'default' }}
                 >
                   <div className="st-atomic-title" style={{ opacity: activeLevel === i ? 1 : 0.4, transition: 'opacity .3s' }}>{lvl.title}</div>
@@ -773,9 +754,9 @@ export default function SistemaDeTurnosPage() {
               ))}
             </div>
             <div className="st-atomic-img-col">
-              <div className="st-atomic-img-wrap" ref={wrapRef}>
-                <div className="st-atomic-img-inner" style={{ transform: `translateY(-${imgOffset}px)` }}>
-                  <img ref={imgRef} src="/Images/Sistema de turnos/componentes.png" alt="Atomic Design" />
+              <div className="st-atomic-img-wrap">
+                <div className="st-atomic-img-inner">
+                  <img src="/Images/Sistema de turnos/componentes.png" alt="Atomic Design" />
                   <div className="st-atomic-overlay">
                     {([
                       { top: '0%',   height: '9%'  },
