@@ -759,9 +759,9 @@ export default function SistemaDeTurnosPage() {
                   <img src="/Images/Sistema de turnos/componentes.png" alt="Atomic Design" />
                   <div className="st-atomic-overlay">
                     {([
-                      { top: '0%',   height: '9%'  },
-                      { top: '9%',   height: '6%'  },
-                      { top: '15%',  height: '85%' },
+                      { top: '0%',   height: '24%' },
+                      { top: '24%',  height: '24%' },
+                      { top: '48%',  height: '52%' },
                     ] as const).map((seg, i) => (
                       <div
                         key={i}
