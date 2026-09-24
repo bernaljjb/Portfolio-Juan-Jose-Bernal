@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
 
@@ -13,8 +13,8 @@ const CSS = `
     --paper: #EFEBE1;
     --dark: #11151D;
     --display: 'Bricolage Grotesque', sans-serif;
-    --body: 'Space Grotesk', sans-serif;
-    --mono: 'Space Mono', monospace;
+    --body: 'Satoshi', sans-serif;
+    --mono: 'Hubot Sans', sans-serif;
     --inter: 'Inter', sans-serif;
     --roboto: 'Roboto', sans-serif;
     background: var(--paper);
@@ -89,24 +89,50 @@ const CSS = `
   .st-chip.acc { border-color: rgba(26,31,143,.5); color: #8891f8; }
 
   /* ── PHONE MOCKUP ── */
-  .st-phone-wrap {
-    width: 240px; background: #fff;
-    border: 3px solid rgba(255,255,255,.15);
-    overflow: hidden; margin: 0 auto;
+  .st-phone-scene { display: flex; justify-content: center; align-items: center; position: relative; }
+  .st-phone-glow {
+    position: absolute; inset: -30%; border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(26,31,143,.45) 0%, transparent 70%);
+    filter: blur(50px); pointer-events: none;
   }
-  .ph-hdr { background: var(--acc); padding: 20px 16px 16px; text-align: center; }
-  .ph-hdr-t { font-family: var(--inter); font-size: 14px; font-weight: 600; color: white; }
-  .ph-hdr-s { font-family: var(--roboto); font-size: 11px; color: rgba(255,255,255,.7); margin-top: 2px; }
-  .ph-bdy { padding: 16px; background: #fff; display: flex; flex-direction: column; gap: 12px; }
-  .ph-sec { display: flex; align-items: center; gap: 8px; }
-  .ph-ico { width: 20px; height: 20px; border: 2px solid var(--acc); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .ph-sec-lbl { font-family: var(--roboto); font-size: 11px; color: var(--ink); }
-  .ph-drop { border: 1px solid #ddd; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; }
-  .ph-drop span { font-family: var(--roboto); font-size: 10px; color: #aaa; }
-  .ph-times { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-  .ph-time { border: 1px solid #ddd; padding: 8px; text-align: center; font-family: var(--roboto); font-size: 11px; color: var(--ink); }
-  .ph-cta { background: #ccc; padding: 10px; text-align: center; font-family: var(--inter); font-size: 11px; font-weight: 600; color: white; }
-  .ph-note { font-family: var(--roboto); font-size: 9px; color: #aaa; text-align: center; line-height: 1.4; }
+  .st-phone-frame {
+    position: relative; width: 240px;
+    background: #0d0f18;
+    border-radius: 40px;
+    padding: 12px;
+    box-shadow: 0 48px 96px rgba(0,0,0,.7), 0 0 0 1.5px rgba(255,255,255,.12), inset 0 0 0 1px rgba(255,255,255,.04);
+    transform: perspective(1000px) rotateY(-6deg) rotateX(2deg);
+    transition: transform .4s ease;
+  }
+  .st-phone-frame:hover { transform: perspective(1000px) rotateY(0deg) rotateX(0deg); }
+  .st-phone-screen {
+    border-radius: 30px; overflow: hidden;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,.08);
+  }
+  .ph-status { background: var(--acc); padding: 8px 16px 0; display: flex; justify-content: space-between; align-items: center; }
+  .ph-status-time { font-family: var(--inter); font-size: 9px; font-weight: 700; color: white; }
+  .ph-status-icons { display: flex; gap: 4px; align-items: center; }
+  .ph-status-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,.7); }
+  .ph-hdr { background: var(--acc); padding: 12px 16px 14px; text-align: center; }
+  .ph-hdr-t { font-family: var(--inter); font-size: 13px; font-weight: 700; color: white; }
+  .ph-hdr-s { font-family: var(--roboto); font-size: 10px; color: rgba(255,255,255,.65); margin-top: 2px; }
+  .ph-bdy { padding: 12px 14px; background: #fff; display: flex; flex-direction: column; gap: 10px; }
+  .ph-sec { display: flex; align-items: center; gap: 7px; }
+  .ph-ico { width: 18px; height: 18px; border: none; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .ph-sec-lbl { font-family: var(--roboto); font-size: 10px; color: var(--ink); font-weight: 500; }
+  .ph-drop { border: 1.5px solid #e0e0e0; border-radius: 6px; padding: 7px 10px; display: flex; justify-content: space-between; align-items: center; background: #fafafa; }
+  .ph-drop span { font-family: var(--roboto); font-size: 9px; color: #aaa; }
+  .ph-times { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+  .ph-ico-filled { background: rgba(26,31,143,.08); }
+  .ph-drop-filled { border-color: #c8c8e8; background: rgba(26,31,143,.04); }
+  .ph-time { border: 1.5px solid #e0e0e0; border-radius: 6px; padding: 7px; text-align: center; font-family: var(--inter); font-size: 10px; color: var(--ink); font-weight: 500; }
+  .ph-time-avail { border-color: #dde; color: var(--ink); }
+  .ph-time-sel { background: var(--acc); color: white; border-color: var(--acc); box-shadow: 0 2px 8px rgba(26,31,143,.35); }
+  .ph-time-unavail { background: #f5f5f5; color: #ccc; border-color: #eee; text-decoration: line-through; }
+  .ph-cta { border-radius: 8px; padding: 10px; text-align: center; font-family: var(--inter); font-size: 11px; font-weight: 700; letter-spacing: .02em; }
+  .ph-cta-active { background: var(--acc); color: white; }
+  .ph-cta-disabled { background: #e0e0e0; color: #aaa; }
+  .ph-note { font-family: var(--roboto); font-size: 8px; color: #bbb; text-align: center; line-height: 1.5; }
 
   /* ── INFO BAR ── */
   .st-infobar { display: flex; border-bottom: 3px solid var(--ink); }
@@ -135,9 +161,20 @@ const CSS = `
   .st-step-desc { font-size: 13px; line-height: 1.8; color: #4a4845; }
 
   /* ── ATOMIC GRID ── */
-  .st-atomic { display: grid; grid-template-columns: repeat(3,1fr); border-top: 3px solid var(--ink); }
-  .st-atomic-block { padding: 40px 32px; border-right: 3px solid var(--ink); }
-  .st-atomic-block:last-child { border-right: none; }
+  .st-atomic-layout { display: grid; grid-template-columns: 1fr 1fr; border-top: 3px solid var(--ink); }
+  .st-atomic { display: grid; grid-template-rows: 1fr 1fr 1fr; border-right: 3px solid var(--ink); }
+  .st-atomic-block { padding: 40px 32px; border-bottom: 3px solid var(--ink); display: flex; flex-direction: column; justify-content: center; }
+  .st-atomic-block:last-child { border-bottom: none; }
+  .st-atomic-img-col { padding: 0; display: flex; align-items: stretch; }
+  .st-atomic-img-wrap { position: sticky; top: 80px; width: 100%; height: calc(100vh - 160px); overflow: hidden; border: 3px solid var(--ink); }
+  .st-atomic-img-inner { position: relative; transition: transform .6s cubic-bezier(.25,.46,.45,.94); }
+  .st-atomic-img-inner img { width: 100%; display: block; }
+  .st-atomic-overlay { position: absolute; inset: 0; pointer-events: none; }
+  .st-atomic-overlay-strip {
+    position: absolute; left: 0; right: 0;
+    background: rgba(239,235,225,.75);
+    transition: opacity .4s ease;
+  }
   .st-atomic-level { font-family: var(--mono); font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: var(--acc); margin-bottom: 12px; }
   .st-atomic-title { font-family: var(--display); font-weight: 800; font-size: 28px; margin-bottom: 10px; }
   .st-atomic-text { font-size: 14px; line-height: 1.7; color: #4a4845; margin-bottom: 14px; }
@@ -145,7 +182,7 @@ const CSS = `
   .st-atomic-tag { font-family: var(--mono); font-size: 9px; letter-spacing: .08em; padding: 3px 8px; border: 2px solid #d8d4cc; color: #7a7770; }
 
   /* ── IMAGE ── */
-  .st-img { width: 100%; border: 3px solid var(--ink); display: block; }
+  .st-img { width: 60%; border: 3px solid var(--ink); display: block; margin-left: auto; margin-right: auto; }
   .st-img-cap { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #7a7770; margin-top: 12px; }
   .st-img-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; margin-top: 40px; }
   .st-img-block img { width: 100%; border: 3px solid var(--ink); display: block; }
@@ -231,8 +268,9 @@ const CSS = `
     .st-pad, .st-pad-b { padding: 48px 20px; }
     .st-steps { grid-template-columns: 1fr 1fr; }
     .st-step:nth-child(2) { border-right: none; }
-    .st-atomic { grid-template-columns: 1fr; }
-    .st-atomic-block { border-right: none; border-bottom: 3px solid var(--ink); }
+    .st-atomic-layout { grid-template-columns: 1fr; }
+    .st-atomic { border-right: none; }
+    .st-atomic-img-col { padding: 24px; }
     .st-img-grid { grid-template-columns: 1fr; }
     .st-comp-grid { grid-template-columns: 1fr; }
     .st-phone-detail { grid-template-columns: 1fr; }
@@ -526,6 +564,26 @@ export default function SistemaDeTurnosPage() {
   const { lang, setLang } = useLanguage();
   const t = T[lang as Lang];
   const ph = t.phone;
+  const [activeLevel, setActiveLevel] = useState(0);
+  const [imgOffset, setImgOffset] = useState(0);
+  const blockRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const imgRef = useRef<HTMLImageElement | null>(null);
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+
+  const sectionStartPct = [0, 0.09, 0.15];
+
+  const handleBlockHover = (idx: number) => {
+    setActiveLevel(idx);
+    const img = imgRef.current;
+    const wrap = wrapRef.current;
+    if (img && wrap) {
+      const imgH = img.offsetHeight;
+      const wrapH = wrap.offsetHeight;
+      const sStart = sectionStartPct[idx] * imgH;
+      const offset = Math.max(0, Math.min(imgH - wrapH, sStart));
+      setImgOffset(offset);
+    }
+  };
 
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -574,59 +632,83 @@ export default function SistemaDeTurnosPage() {
           </div>
 
           {/* Phone mockup */}
-          <div style={{ display:'flex', justifyContent:'center', alignItems:'center' }}>
-            <div className="st-phone-wrap">
-              <div className="ph-hdr">
-                <div className="ph-hdr-t">{ph.title}</div>
-                <div className="ph-hdr-s">{ph.sub}</div>
-              </div>
-              <div className="ph-bdy">
-                <div>
-                  <div className="ph-sec">
-                    <div className="ph-ico">
-                      <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
-                        <circle cx="6" cy="5" r="2.5" stroke="#1a1f8f" strokeWidth="1.2"/>
-                        <path d="M6 12C6 12 2 7.5 2 5a4 4 0 018 0c0 2.5-4 7-4 7z" stroke="#1a1f8f" strokeWidth="1.2"/>
-                      </svg>
-                    </div>
-                    <span className="ph-sec-lbl">{ph.officeLabel}</span>
-                  </div>
-                  <div className="ph-drop" style={{ marginTop:6 }}>
-                    <span>{ph.officePh}</span><span style={{ color:'#aaa' }}>▼</span>
+          <div className="st-phone-scene">
+            <div className="st-phone-glow" />
+            <div className="st-phone-frame">
+              <div className="st-phone-screen">
+                {/* Status bar */}
+                <div className="ph-status">
+                  <span className="ph-status-time">10:24</span>
+                  <div className="ph-status-icons">
+                    <svg width="12" height="8" viewBox="0 0 12 8" fill="none"><rect x="0" y="2" width="2" height="6" rx=".5" fill="rgba(255,255,255,.5)"/><rect x="3" y="1.5" width="2" height="6.5" rx=".5" fill="rgba(255,255,255,.6)"/><rect x="6" y=".5" width="2" height="7.5" rx=".5" fill="rgba(255,255,255,.8)"/><rect x="9" y="0" width="2" height="8" rx=".5" fill="white"/></svg>
+                    <svg width="14" height="8" viewBox="0 0 14 8" fill="white" fillOpacity=".9"><path d="M7 1.5C9.2 1.5 11.2 2.4 12.6 3.9L13.5 3C11.8 1.1 9.5 0 7 0S2.2 1.1.5 3l.9.9C2.8 2.4 4.8 1.5 7 1.5z"/><path d="M7 4C8.4 4 9.7 4.6 10.6 5.6l.9-.9C10.3 3.5 8.7 2.8 7 2.8S3.7 3.5 2.5 4.7l.9.9C4.3 4.6 5.6 4 7 4z"/><circle cx="7" cy="7" r="1"/></svg>
+                    <svg width="20" height="10" viewBox="0 0 20 10" fill="none"><rect x=".5" y=".5" width="17" height="9" rx="2.5" stroke="white" strokeOpacity=".35"/><rect x="1.5" y="1.5" width="13" height="7" rx="1.5" fill="white"/><path d="M18.5 3.5v3a1.5 1.5 0 000-3z" fill="white" fillOpacity=".4"/></svg>
                   </div>
                 </div>
-                <div>
-                  <div className="ph-sec">
-                    <div className="ph-ico">
-                      <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
-                        <rect x="1.5" y="1.5" width="9" height="9" rx="1" stroke="#1a1f8f" strokeWidth="1.2"/>
-                        <path d="M3.5 4h5M3.5 6h5M3.5 8h3" stroke="#1a1f8f" strokeWidth="1.2"/>
-                      </svg>
-                    </div>
-                    <span className="ph-sec-lbl">{ph.tramiteLabel}</span>
-                  </div>
-                  <div className="ph-drop" style={{ marginTop:6 }}>
-                    <span>{ph.tramitePh}</span><span style={{ color:'#aaa' }}>▲</span>
-                  </div>
+                {/* App header */}
+                <div className="ph-hdr">
+                  <div className="ph-hdr-t">{ph.title}</div>
+                  <div className="ph-hdr-s">{ph.sub}</div>
                 </div>
-                <div>
-                  <div className="ph-sec">
-                    <div className="ph-ico">
-                      <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
-                        <circle cx="6" cy="6" r="4.5" stroke="#1a1f8f" strokeWidth="1.2"/>
-                        <path d="M6 3.5V6l2 1.5" stroke="#1a1f8f" strokeWidth="1.2" strokeLinecap="round"/>
-                      </svg>
+                {/* App body */}
+                <div className="ph-bdy">
+                  {/* Oficina — filled */}
+                  <div>
+                    <div className="ph-sec">
+                      <div className="ph-ico ph-ico-filled">
+                        <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+                          <circle cx="6" cy="5" r="2.5" stroke="#1a1f8f" strokeWidth="1.2"/>
+                          <path d="M6 12C6 12 2 7.5 2 5a4 4 0 018 0c0 2.5-4 7-4 7z" stroke="#1a1f8f" strokeWidth="1.2"/>
+                        </svg>
+                      </div>
+                      <span className="ph-sec-lbl">{ph.officeLabel}</span>
                     </div>
-                    <span className="ph-sec-lbl">{ph.horariosLabel}</span>
+                    <div className="ph-drop ph-drop-filled" style={{ marginTop:5 }}>
+                      <span style={{ color:'#0e0e0c', fontWeight:500 }}>Sede Centro — Bogotá</span>
+                      <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1 2.5l3 3 3-3" stroke="#1a1f8f" strokeWidth="1.2" strokeLinecap="round"/></svg>
+                    </div>
                   </div>
-                  <div className="ph-times" style={{ marginTop:6 }}>
-                    {['9:00','9:30','10:00','10:30','11:00','11:30'].map(s => (
-                      <div key={s} className="ph-time">{s}</div>
-                    ))}
+                  {/* Tramite — filled, open */}
+                  <div>
+                    <div className="ph-sec">
+                      <div className="ph-ico ph-ico-filled">
+                        <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+                          <rect x="1.5" y="1.5" width="9" height="9" rx="1" stroke="#1a1f8f" strokeWidth="1.2"/>
+                          <path d="M3.5 4h5M3.5 6h5M3.5 8h3" stroke="#1a1f8f" strokeWidth="1.2"/>
+                        </svg>
+                      </div>
+                      <span className="ph-sec-lbl">{ph.tramiteLabel}</span>
+                    </div>
+                    <div className="ph-drop ph-drop-filled" style={{ marginTop:5 }}>
+                      <span style={{ color:'#0e0e0c', fontWeight:500 }}>DNI — Doc. Nacional <span style={{ color:'#888', fontWeight:400 }}>(30 min)</span></span>
+                      <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M7 5.5L4 2.5 1 5.5" stroke="#1a1f8f" strokeWidth="1.2" strokeLinecap="round"/></svg>
+                    </div>
                   </div>
+                  {/* Horarios */}
+                  <div>
+                    <div className="ph-sec">
+                      <div className="ph-ico">
+                        <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+                          <circle cx="6" cy="6" r="4.5" stroke="#1a1f8f" strokeWidth="1.2"/>
+                          <path d="M6 3.5V6l2 1.5" stroke="#1a1f8f" strokeWidth="1.2" strokeLinecap="round"/>
+                        </svg>
+                      </div>
+                      <span className="ph-sec-lbl">{ph.horariosLabel}</span>
+                    </div>
+                    <div className="ph-times" style={{ marginTop:5 }}>
+                      {[
+                        {t:'9:00',s:'unavail'},{t:'9:30',s:'unavail'},
+                        {t:'10:00',s:'sel'},{t:'10:30',s:'avail'},
+                        {t:'11:00',s:'avail'},{t:'11:30',s:'avail'},
+                        {t:'14:00',s:'avail'},{t:'14:30',s:'avail'},
+                      ].map(({t,s}) => (
+                        <div key={t} className={`ph-time ph-time-${s}`}>{t}</div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="ph-cta ph-cta-active">{ph.btnConfirm || 'Confirmar turno'}</div>
+                  <div className="ph-note">{ph.note}</div>
                 </div>
-                <div className="ph-cta">{ph.btn}</div>
-                <div className="ph-note">{ph.note}</div>
               </div>
             </div>
           </div>
@@ -673,21 +755,47 @@ export default function SistemaDeTurnosPage() {
             <h2 className="st-h2">{t.atomic.heading}</h2>
             <p className="st-body">{t.atomic.intro}</p>
           </div>
-          <div className="st-atomic">
-            {t.atomic.levels.map(lvl => (
-              <div key={lvl.level} className="st-atomic-block">
-                <div className="st-atomic-level">{lvl.level}</div>
-                <div className="st-atomic-title">{lvl.title}</div>
-                <p className="st-atomic-text">{lvl.text}</p>
-                <div className="st-atomic-tags">
-                  {lvl.tags.map(tag => <span key={tag} className="st-atomic-tag">{tag}</span>)}
+          <div className="st-atomic-layout">
+            <div className="st-atomic">
+              {t.atomic.levels.map((lvl, i) => (
+                <div
+                  key={lvl.level}
+                  className="st-atomic-block"
+                  onMouseEnter={() => handleBlockHover(i)}
+                  style={{ borderLeft: activeLevel === i ? `4px solid var(--acc)` : '4px solid transparent', transition: 'border-color .3s', cursor: 'default' }}
+                >
+                  <div className="st-atomic-title" style={{ opacity: activeLevel === i ? 1 : 0.4, transition: 'opacity .3s' }}>{lvl.title}</div>
+                  <p className="st-atomic-text" style={{ opacity: activeLevel === i ? 1 : 0.4, transition: 'opacity .3s' }}>{lvl.text}</p>
+                  <div className="st-atomic-tags" style={{ opacity: activeLevel === i ? 1 : 0.4, transition: 'opacity .3s' }}>
+                    {lvl.tags.map(tag => <span key={tag} className="st-atomic-tag">{tag}</span>)}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="st-atomic-img-col">
+              <div className="st-atomic-img-wrap" ref={wrapRef}>
+                <div className="st-atomic-img-inner" style={{ transform: `translateY(-${imgOffset}px)` }}>
+                  <img ref={imgRef} src="/Images/Sistema de turnos/componentes.png" alt="Atomic Design" />
+                  <div className="st-atomic-overlay">
+                    {([
+                      { top: '0%',   height: '9%'  },
+                      { top: '9%',   height: '6%'  },
+                      { top: '15%',  height: '85%' },
+                    ] as const).map((seg, i) => (
+                      <div
+                        key={i}
+                        className="st-atomic-overlay-strip"
+                        style={{
+                          top: seg.top,
+                          height: seg.height,
+                          opacity: activeLevel === i ? 0 : 1,
+                        }}
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
-          <div style={{ padding:'0 40px 72px' }}>
-            <img src="/Images/Sistema de turnos/componentes.png" alt="Atomic Design" className="st-img" style={{ marginTop:40 }} />
-            <div className="st-img-cap">{t.atomic.imgCap}</div>
+            </div>
           </div>
         </div>
 
