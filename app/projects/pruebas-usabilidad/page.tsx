@@ -188,13 +188,15 @@ const CSS = `
     border: 3px solid var(--ink);
     position: relative;
     background: #f0f0f5;
+    aspect-ratio: 16 / 9;
   }
   .pu-proto-frame-wrap iframe {
-    width: 100%; height: 600px; display: block; border: none;
+    position: absolute; inset: 0;
+    width: 100%; height: 100%; display: block; border: none;
   }
   @media (max-width: 768px) {
     .pu-proto-inner { padding: 48px 20px; }
-    .pu-proto-frame-wrap iframe { height: 400px; }
+    .pu-proto-frame-wrap { aspect-ratio: 4 / 3; }
   }
 
   /* METRICS TABLE */
