@@ -180,6 +180,23 @@ const CSS = `
     font-style: italic;
   }
 
+  /* PROTOTYPE EMBED */
+  .pu-proto-section { border-bottom: 3px solid var(--ink); }
+  .pu-proto-inner { padding: 80px 40px; }
+  .pu-proto-frame-wrap {
+    margin-top: 40px;
+    border: 3px solid var(--ink);
+    position: relative;
+    background: #f0f0f5;
+  }
+  .pu-proto-frame-wrap iframe {
+    width: 100%; height: 600px; display: block; border: none;
+  }
+  @media (max-width: 768px) {
+    .pu-proto-inner { padding: 48px 20px; }
+    .pu-proto-frame-wrap iframe { height: 400px; }
+  }
+
   /* METRICS TABLE */
   .pu-metrics-grid {
     margin-top: 48px;
@@ -650,6 +667,21 @@ export default function PruebasUsabilidad() {
           <div className="pu-scenario">
             <div className="pu-scenario-label">{t.scenarioLabel}</div>
             <p className="pu-scenario-text">{t.scenario}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* PROTOTYPE EMBED */}
+      <section className="pu-proto-section">
+        <div className="pu-proto-inner">
+          <div className="pu-label">Prototipo</div>
+          <h2 className="pu-h2">{t.projectName}</h2>
+          <div className="pu-proto-frame-wrap">
+            <iframe
+              src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Fproto%2FR2YfrLvfXxPfeKXKrOUExq%2FUX-UI-%25E2%2580%2593-Interactive-%25E2%2580%2593-Sprint-11--Copy-%3Fnode-id%3D0-61%26p%3Df%26t%3DkQjfZhJPWUtTFiqd-1%26scaling%3Dmin-zoom%26content-scaling%3Dfixed%26page-id%3D0%253A1"
+              allowFullScreen
+              title="Prototipo Figma — Elige al orador de apertura"
+            />
           </div>
         </div>
       </section>
