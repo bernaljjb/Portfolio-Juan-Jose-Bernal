@@ -681,7 +681,7 @@ export default function PruebasUsabilidad() {
         </div>
         <div className="pu-proto-frame-wrap">
             <iframe
-              src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Fproto%2FR2YfrLvfXxPfeKXKrOUExq%2FUX-UI-%E2%80%93-Interactive-%E2%80%93-Sprint-11--Copy-%3Fnode-id%3D0-61%26scaling%3Dmin-zoom%26content-scaling%3Dfixed%26page-id%3D0%3A1"
+              src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Fproto%2FR2YfrLvfXxPfeKXKrOUExq%2FUX-UI-%E2%80%93-Interactive-%E2%80%93-Sprint-11--Copy-%3Fnode-id%3D0-61%26scaling%3Dscale-down-to-fit%26page-id%3D0%3A1"
               allowFullScreen
               title="Prototipo Figma — Elige al orador de apertura"
             />
