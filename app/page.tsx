@@ -252,10 +252,10 @@ const CSS = `
     font-size: clamp(22px, 3vw, 38px); letter-spacing: -.025em; line-height: 1;
   }
   .jjb-row-right {
-    display: flex; align-items: center; gap: 18px;
-    font-family: var(--mono); font-size: 13px;
+    display: flex; align-items: center; gap: 12px;
+    font-family: var(--mono); font-size: 11px;
     letter-spacing: .06em; text-transform: uppercase;
-    white-space: nowrap;
+    white-space: nowrap; flex-shrink: 0;
   }
   .jjb-row-arrow { font-size: 22px; transition: transform .25s; }
   .jjb-row:hover .jjb-row-arrow { transform: translateX(8px); }
@@ -383,6 +383,7 @@ const CSS = `
     .jjb-skill:last-child { border-bottom: none; }
     .jjb-index-header, .jjb-row { padding: 22px 24px; }
     .jjb-row:hover { padding-left: 36px; }
+    .jjb-row-right { display: none; }
     .jjb-hero, .jjb-contact { padding-left: 24px; padding-right: 24px; }
     .jjb-nav { padding: 14px 24px; }
     .jjb-contact-headline { font-size: clamp(48px, 16vw, 96px); }
@@ -417,7 +418,7 @@ export default function Home() {
           { name: 'Substrack',            meta: 'Dashboard · Design System',  href: '/projects/substrack' },
           { name: 'EsDesign Login',       meta: 'WCAG AA · Rediseño',         href: '/projects/esdesign' },
           { name: 'Sistema de Turnos',    meta: 'Design System · Maze',       href: '/projects/sistema-de-turnos' },
-          { name: 'Pruebas de Usabilidad',meta: 'UX Research · Maze',         href: null },
+          { name: 'Pruebas de Usabilidad',meta: 'UX Research · Maze',         href: '/projects/pruebas-usabilidad' },
           { name: 'Cards Documentation',  meta: 'Handoff · Specs',            href: null },
         ],
       },
@@ -457,7 +458,7 @@ export default function Home() {
           { name: 'Substrack',            meta: 'Dashboard · Design System',  href: '/projects/substrack' },
           { name: 'EsDesign Login',       meta: 'WCAG AA · Redesign',         href: '/projects/esdesign' },
           { name: 'Queue Management System', meta: 'Design System · Maze',    href: '/projects/sistema-de-turnos' },
-          { name: 'Usability Testing',    meta: 'UX Research · Maze',         href: null },
+          { name: 'Usability Testing',    meta: 'UX Research · Maze',         href: '/projects/pruebas-usabilidad' },
           { name: 'Cards Documentation',  meta: 'Handoff · Specs',            href: null },
         ],
       },
