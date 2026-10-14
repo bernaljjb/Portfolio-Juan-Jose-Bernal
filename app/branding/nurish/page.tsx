@@ -12,8 +12,8 @@ const CSS = `
     --paper: #EFEBE1;
     --dark: #11151D;
     --display: 'Bricolage Grotesque', sans-serif;
-    --body: 'Space Grotesk', sans-serif;
-    --mono: 'Space Mono', monospace;
+    --body: 'Satoshi', sans-serif;
+    --mono: 'Hubot Sans', sans-serif;
   }
 
   .nu-wrap { font-family: var(--body); color: var(--ink); background: var(--paper); min-height: 100vh; }

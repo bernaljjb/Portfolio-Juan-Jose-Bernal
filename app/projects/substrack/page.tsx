@@ -2,6 +2,8 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
+import { TransitionLink } from '@/components/TransitionLink';
+import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
 
 // ─── CSS ─────────────────────────────────────────────────────────────────────
@@ -12,8 +14,8 @@ const CSS = `
     --paper: #EFEBE1;
     --dark: #11151D;
     --display: 'Bricolage Grotesque', sans-serif;
-    --body: 'Space Grotesk', sans-serif;
-    --mono: 'Space Mono', monospace;
+    --body: 'Satoshi', sans-serif;
+    --mono: 'Hubot Sans', sans-serif;
     background: var(--paper);
     color: var(--ink);
     font-family: var(--body);
@@ -52,10 +54,10 @@ const CSS = `
   /* ── HERO ── */
   .sb-hero {
     background: var(--dark); color: var(--paper);
-    display: grid; grid-template-columns: 1fr 1fr;
-    padding: 80px 40px; gap: 60px; align-items: center;
+    display: grid; grid-template-columns: 1fr 1.4fr;
+    padding: 80px 40px 80px 60px; gap: 60px; align-items: center;
     border-bottom: 3px solid var(--ink);
-    min-height: 90vh;
+    min-height: 90vh; overflow: hidden;
   }
   .sb-hero-eyebrow {
     display: flex; align-items: center; gap: 10px; margin-bottom: 28px;
@@ -86,7 +88,42 @@ const CSS = `
     border: 2px solid rgba(239,235,225,.2); color: rgba(239,235,225,.65);
   }
 
-  /* ── DASHBOARD PREVIEW ── */
+  /* ── HERO MOCKUP FRAME ── */
+  .sb-mockup-wrap {
+    position: relative; display: flex; align-items: center; justify-content: center;
+  }
+  .sb-mockup-glow {
+    position: absolute; inset: -20%; border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(123,47,190,.35) 0%, transparent 70%);
+    filter: blur(40px); pointer-events: none;
+  }
+  .sb-mockup-frame {
+    position: relative; width: 100%;
+    background: #1a1a2e; border-radius: 12px;
+    box-shadow: 0 40px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.08);
+    overflow: hidden;
+    transform: perspective(1000px) rotateY(-4deg) rotateX(2deg);
+    transition: transform .4s ease;
+  }
+  .sb-mockup-frame:hover {
+    transform: perspective(1000px) rotateY(0deg) rotateX(0deg);
+  }
+  .sb-mockup-bar {
+    background: #2a2a3e; padding: 10px 14px;
+    display: flex; align-items: center; gap: 7px;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+  }
+  .sb-mockup-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .sb-mockup-url {
+    flex: 1; background: rgba(255,255,255,.06); border-radius: 4px;
+    height: 20px; margin-left: 8px;
+    display: flex; align-items: center; padding: 0 10px;
+    font-family: var(--mono); font-size: 9px; color: rgba(255,255,255,.3);
+    letter-spacing: .04em;
+  }
+  .sb-mockup-img { width: 100%; display: block; }
+
+  /* ── DASHBOARD PREVIEW (legacy) ── */
   .sb-ui {
     background: #fff; border: 3px solid rgba(255,255,255,.15);
     overflow: hidden;
@@ -98,13 +135,33 @@ const CSS = `
   .sb-ui-dot { width: 9px; height: 9px; border-radius: 50%; }
   .sb-ui-body { display: flex; height: 260px; }
   .sb-ui-sidebar {
-    width: 60px; background: var(--dark);
+    width: 68px; background: var(--dark);
     display: flex; flex-direction: column; align-items: center;
-    padding: 14px 0; gap: 20px;
+    padding: 14px 0; gap: 4px;
   }
-  .sb-ui-logo { font-family: var(--display); font-size: 16px; color: white; }
-  .sb-ui-icon { width: 22px; height: 22px; background: rgba(255,255,255,.08); }
-  .sb-ui-icon.on { background: var(--acc); }
+  .sb-ui-logo { display: block; width: 28px; height: auto; margin-bottom: 10px; }
+  .sb-ui-nav-item {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    padding: 7px 6px; border-radius: 8px; width: 56px; cursor: pointer;
+    transition: background .15s;
+  }
+  .sb-ui-nav-item:hover { background: rgba(255,255,255,.06); }
+  .sb-ui-nav-item.on { background: rgba(123,47,190,.25); }
+  .sb-ui-nav-icon {
+    width: 18px; height: 18px; display: flex; align-items: center; justify-content: center;
+    color: rgba(255,255,255,.4);
+  }
+  .sb-ui-nav-item.on .sb-ui-nav-icon { color: var(--acc); }
+  .sb-ui-nav-label {
+    font-size: 7px; color: rgba(255,255,255,.35); text-align: center;
+    font-family: var(--mono); letter-spacing: .04em;
+  }
+  .sb-ui-nav-item.on .sb-ui-nav-label { color: var(--acc); }
+  .sb-ui-profile {
+    margin-top: auto; width: 28px; height: 28px; border-radius: 50%;
+    background: rgba(255,255,255,.15); display: flex; align-items: center; justify-content: center;
+    color: rgba(255,255,255,.5); font-size: 10px;
+  }
   .sb-ui-main {
     flex: 1; padding: 14px 16px;
     display: flex; flex-direction: column; gap: 8px;
@@ -517,12 +574,12 @@ export default function SubstrackCaseStudy() {
 
         {/* ── NAV ── */}
         <nav className="sb-nav">
-          <Link href="/#projects" className="sb-back">
+          <TransitionLink href="/" className="sb-back">
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
               <path d="M13 8H3M7 4L3 8l4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
             {t.nav.back}
-          </Link>
+          </TransitionLink>
           <div className="sb-nav-right">
             <img src="/Images/LogoJJB/Logo%20JJB%20negro.png" alt="JJB" className="sb-nav-logo" />
             <div className="sb-lang">
@@ -548,54 +605,70 @@ export default function SubstrackCaseStudy() {
             </div>
           </div>
 
-          {/* Dashboard preview */}
-          <div className="sb-ui">
-            <div className="sb-ui-topbar">
-              <div className="sb-ui-dot" style={{ background:'#ff5f57' }} />
-              <div className="sb-ui-dot" style={{ background:'#febc2e' }} />
-              <div className="sb-ui-dot" style={{ background:'#28c840' }} />
-              <div style={{ flex:1, background:'#ddd', height:'16px', marginLeft:'8px' }} />
-            </div>
-            <div className="sb-ui-body">
-              <div className="sb-ui-sidebar">
-                <span className="sb-ui-logo">JB</span>
-                <div className="sb-ui-icon" /><div className="sb-ui-icon on" />
-                <div className="sb-ui-icon" /><div className="sb-ui-icon" />
-                <div className="sb-ui-icon" style={{ marginTop:'auto', borderRadius:'50%' }} />
+          {/* Hero mockup */}
+          <div className="sb-mockup-wrap">
+            <div className="sb-mockup-glow" />
+            <div className="sb-mockup-frame">
+              <div className="sb-mockup-bar">
+                <div className="sb-mockup-dot" style={{ background:'#ff5f57' }} />
+                <div className="sb-mockup-dot" style={{ background:'#febc2e' }} />
+                <div className="sb-mockup-dot" style={{ background:'#28c840' }} />
+                <div className="sb-mockup-url">app.substrack.co</div>
               </div>
-              <div className="sb-ui-main">
-                <div className="sb-ui-hdr">
-                  <span className="sb-ui-title">{t.uiMock.title}</span>
-                  <div className="sb-ui-search">{t.uiMock.search}</div>
-                  <div className="sb-ui-btn">{t.uiMock.search_btn}</div>
-                </div>
-                <div className="sb-ui-filters">
-                  {t.uiMock.filters.map((f,i) => (
-                    <span key={f} className={`sb-ui-pill${i===0?' on':''}`}>{f}</span>
-                  ))}
-                </div>
-                <div className="sb-ui-thead">
-                  {['Producto','Estado','Renovación','Plan','Costo'].map(c => <span key={c}>{c}</span>)}
-                </div>
-                {[
-                  { name:'Netflix', color:'#2D8B6F', date:'15 Jun', plan:'Premium', cost:'$18', op:1 },
-                  { name:'Spotify', color:'#2D8B6F', date:'20 Jun', plan:'Duo',     cost:'$12', op:1 },
-                  { name:'Gym XL',  color:'#E8421A', date:'30 Jun', plan:lang==='es'?'Mensual':'Monthly', cost:'$35', op:1 },
-                  { name:'Claude',  color:'#555',    date:'01 Jul', plan:'Pro',      cost:'$20', op:0.5 },
-                ].map((row,i) => (
-                  <div key={row.name} className="sb-ui-trow" style={{ opacity:row.op }}>
-                    <span>{row.name}</span>
-                    <span style={{ color:row.color }}>{t.uiMock.rows[i]}</span>
-                    <span>{row.date}</span><span>{row.plan}</span><span>{row.cost}</span>
+              <div className="sb-ui">
+                <div className="sb-ui-body">
+                  <div className="sb-ui-sidebar">
+                    <Image src="/Images/LogoJJB/Logo JJB.png" alt="JJB" width={28} height={28} className="sb-ui-logo" />
+                    {[
+                      { label: lang==='es'?'Estadísticas':'Statistics', active: false, icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="12" width="4" height="9"/><rect x="10" y="7" width="4" height="14"/><rect x="17" y="3" width="4" height="18"/></svg> },
+                      { label: lang==='es'?'Membresía':'Membership', active: true,  icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg> },
+                      { label: lang==='es'?'Notificaciones':'Notifications', active: false, icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg> },
+                      { label: lang==='es'?'Historial':'History', active: false, icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> },
+                    ].map(item => (
+                      <div key={item.label} className={`sb-ui-nav-item${item.active?' on':''}`}>
+                        <div className="sb-ui-nav-icon">{item.icon}</div>
+                        <span className="sb-ui-nav-label">{item.label}</span>
+                      </div>
+                    ))}
+                    <div className="sb-ui-profile" style={{ marginTop:'auto' }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </div>
                   </div>
-                ))}
-              </div>
-              <div className="sb-ui-detail">
-                <div className="sb-ui-detail-title">Subscription product</div>
-                {t.uiMock.detail.map(([k,v]) => (
-                  <div key={k} className="sb-ui-dr"><div className="dl">{k}</div><div className="dv">{v}</div></div>
-                ))}
-                <div className="sb-ui-action">{t.uiMock.action}</div>
+                  <div className="sb-ui-main">
+                    <div className="sb-ui-hdr">
+                      <span className="sb-ui-title">{t.uiMock.title}</span>
+                      <div className="sb-ui-search">{t.uiMock.search}</div>
+                      <div className="sb-ui-btn">{t.uiMock.search_btn}</div>
+                    </div>
+                    <div className="sb-ui-filters">
+                      {t.uiMock.filters.map((f,i) => (
+                        <span key={f} className={`sb-ui-pill${i===0?' on':''}`}>{f}</span>
+                      ))}
+                    </div>
+                    <div className="sb-ui-thead">
+                      {['Producto','Estado','Renovación','Plan','Costo'].map(c => <span key={c}>{c}</span>)}
+                    </div>
+                    {[
+                      { name:'Netflix',  color:'#2D8B6F', date:'15 Jun', plan:'Premium', cost:'$18', op:1 },
+                      { name:'Spotify',  color:'#2D8B6F', date:'20 Jun', plan:'Duo',     cost:'$12', op:1 },
+                      { name:'Gym XL',   color:'#E8421A', date:'30 Jun', plan:lang==='es'?'Mensual':'Monthly', cost:'$35', op:1 },
+                      { name:'Claude',   color:'#555',    date:'01 Jul', plan:'Pro',      cost:'$20', op:0.5 },
+                    ].map((row,i) => (
+                      <div key={row.name} className="sb-ui-trow" style={{ opacity:row.op }}>
+                        <span>{row.name}</span>
+                        <span style={{ color:row.color }}>{t.uiMock.rows[i]}</span>
+                        <span>{row.date}</span><span>{row.plan}</span><span>{row.cost}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="sb-ui-detail">
+                    <div className="sb-ui-detail-title">Subscription product</div>
+                    {t.uiMock.detail.map(([k,v]) => (
+                      <div key={k} className="sb-ui-dr"><div className="dl">{k}</div><div className="dv">{v}</div></div>
+                    ))}
+                    <div className="sb-ui-action">{t.uiMock.action}</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

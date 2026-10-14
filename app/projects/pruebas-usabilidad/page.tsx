@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { TransitionLink } from '@/components/TransitionLink';
 import { useLanguage } from '@/context/LanguageContext';
 
 const CSS = `
@@ -607,12 +608,12 @@ export default function PruebasUsabilidad() {
 
       {/* NAV */}
       <nav className="pu-nav">
-        <Link href="/" className="pu-back">
+        <TransitionLink href="/" className="pu-back">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
             <path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
           {t.back}
-        </Link>
+        </TransitionLink>
         <div className="pu-nav-right">
           <div className="pu-lang">
             <button className={`pu-lang-btn${language === 'es' ? ' active' : ''}`} onClick={() => setLanguage('es')}>ES</button>

@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
+import { TransitionLink } from '@/components/TransitionLink';
 import { useLanguage } from '@/context/LanguageContext';
 
 // ─── CSS ─────────────────────────────────────────────────────────────────────
@@ -14,8 +15,8 @@ const CSS = `
     --paper: #EFEBE1;
     --dark: #11151D;
     --display: 'Bricolage Grotesque', sans-serif;
-    --body: 'Space Grotesk', sans-serif;
-    --mono: 'Space Mono', monospace;
+    --body: 'Satoshi', sans-serif;
+    --mono: 'Hubot Sans', sans-serif;
     --roboto: 'Roboto', sans-serif;
     background: var(--paper);
     color: var(--ink);
@@ -89,21 +90,42 @@ const CSS = `
   .esd-chip.acc { border-color: rgba(232,66,26,.5); color: var(--acc); }
 
   /* ── BEFORE / AFTER CARDS ── */
+  .esd-ba-wrap {
+    position: relative; display: flex; align-items: center; justify-content: center;
+  }
+  .esd-ba-glow {
+    position: absolute; inset: -20%; border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(232,66,26,.2) 0%, transparent 70%);
+    filter: blur(40px); pointer-events: none;
+  }
+  .esd-ba-frame {
+    position: relative; width: 100%;
+    background: #1a1e2a; border-radius: 12px;
+    box-shadow: 0 40px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.07);
+    overflow: hidden;
+    padding: 24px 20px;
+  }
+  .esd-ba-label {
+    font-family: var(--mono); font-size: 9px; letter-spacing: .2em;
+    text-transform: uppercase; color: rgba(255,255,255,.35);
+    margin-bottom: 12px; text-align: center;
+  }
   .esd-ba {
-    display: flex; gap: 14px; align-items: flex-start;
+    display: flex; gap: 12px; align-items: flex-start;
   }
   .esd-card {
-    flex: 1; padding: 22px 18px;
+    flex: 1; padding: 18px 14px;
     display: flex; flex-direction: column; gap: 9px;
-    border: 3px solid rgba(255,255,255,.15);
-    position: relative; overflow: hidden;
+    border: 1px solid rgba(255,255,255,.1);
+    position: relative; overflow: hidden; border-radius: 8px;
   }
   .esd-card-before { background: linear-gradient(150deg,#c8b8d8 0%,#a8c4d8 50%,#d8c4b0 100%); }
-  .esd-card-after  { background: #fff; border-color: rgba(255,255,255,.3); }
+  .esd-card-after  { background: #fff; border-color: rgba(255,255,255,.2); }
   .esd-vs {
-    width: 32px; height: 32px; background: var(--ink);
+    width: 28px; height: 28px; background: rgba(255,255,255,.1);
+    border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    color: white; font-family: var(--mono); font-size: 9px;
+    color: rgba(255,255,255,.6); font-family: var(--mono); font-size: 8px;
     flex-shrink: 0; align-self: center;
   }
   .esd-badge {
@@ -541,12 +563,12 @@ export default function EsDesignCaseStudy() {
 
         {/* ── NAV ── */}
         <nav className="esd-nav">
-          <Link href="/#projects" className="esd-back">
+          <TransitionLink href="/" className="esd-back">
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
               <path d="M13 8H3M7 4L3 8l4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
             {t.nav.back}
-          </Link>
+          </TransitionLink>
           <div className="esd-nav-right">
             <img src="/Images/LogoJJB/Logo%20JJB%20negro.png" alt="JJB" className="esd-nav-logo" />
             <div className="esd-lang">
@@ -575,34 +597,40 @@ export default function EsDesignCaseStudy() {
           </div>
 
           {/* Before / After cards */}
-          <div className="esd-ba">
-            <div className="esd-card esd-card-before">
-              <div className="esd-badge esd-badge-fail">{b.badge}</div>
-              <span style={{ fontFamily:'var(--mono)', fontSize:'8px', letterSpacing:'.12em', textTransform:'uppercase', color:'rgba(0,0,0,.4)' }}>{b.label}</span>
-              <div className="esd-brand"><span className="esd-es">ES</span><span className="esd-design-b">DESIGN</span></div>
-              <div className="esd-sub" style={{ color:'rgba(0,0,0,.4)' }}>{b.school}</div>
-              <div className="esd-field esd-field-b">juanjose@gmail.com</div>
-              <div className="esd-field esd-field-b">••••••••</div>
-              <div className="esd-btn esd-btn-b">{b.loginBtn}</div>
-              {b.errors.map(e => <div key={e} className="esd-err-tag">{e}</div>)}
-            </div>
+          <div className="esd-ba-wrap">
+            <div className="esd-ba-glow" />
+            <div className="esd-ba-frame">
+              <div className="esd-ba-label">{lang==='es'?'Comparativa de rediseño · Accesibilidad WCAG AA':'Redesign comparison · WCAG AA Accessibility'}</div>
+              <div className="esd-ba">
+                <div className="esd-card esd-card-before">
+                  <div className="esd-badge esd-badge-fail">{b.badge}</div>
+                  <span style={{ fontFamily:'var(--mono)', fontSize:'8px', letterSpacing:'.12em', textTransform:'uppercase', color:'rgba(0,0,0,.4)' }}>{b.label}</span>
+                  <div className="esd-brand"><span className="esd-es">ES</span><span className="esd-design-b">DESIGN</span></div>
+                  <div className="esd-sub" style={{ color:'rgba(0,0,0,.4)' }}>{b.school}</div>
+                  <div className="esd-field esd-field-b">juanjose@gmail.com</div>
+                  <div className="esd-field esd-field-b">••••••••</div>
+                  <div className="esd-btn esd-btn-b">{b.loginBtn}</div>
+                  {b.errors.map(e => <div key={e} className="esd-err-tag">{e}</div>)}
+                </div>
 
-            <div className="esd-vs">VS</div>
+                <div className="esd-vs">VS</div>
 
-            <div className="esd-card esd-card-after">
-              <div className="esd-badge esd-badge-pass">{a.badge}</div>
-              <span style={{ fontFamily:'var(--mono)', fontSize:'8px', letterSpacing:'.12em', textTransform:'uppercase', color:'#888' }}>{a.label}</span>
-              <div className="esd-brand"><span className="esd-es">ES</span><span className="esd-design-a">DESIGN</span></div>
-              <div className="esd-sub" style={{ color:'#888' }}>{a.school}</div>
-              <div className="esd-bb">{a.platform}</div>
-              <div className="esd-section">{a.sectionTitle}</div>
-              <div style={{ fontSize:'12px', fontWeight:500, color:'var(--ink)', fontFamily:'var(--roboto)' }}>{a.emailLabel}</div>
-              <div className="esd-field esd-field-a">{a.emailPh}</div>
-              <div style={{ fontSize:'12px', fontWeight:500, color:'var(--ink)', fontFamily:'var(--roboto)' }}>{a.passLabel}</div>
-              <div className="esd-field esd-field-a">{a.passPh}</div>
-              <div className="esd-forgot">{a.forgot}</div>
-              <div className="esd-btn esd-btn-a">{a.loginBtn}</div>
-              <div className="esd-check-tag">{a.check}</div>
+                <div className="esd-card esd-card-after">
+                  <div className="esd-badge esd-badge-pass">{a.badge}</div>
+                  <span style={{ fontFamily:'var(--mono)', fontSize:'8px', letterSpacing:'.12em', textTransform:'uppercase', color:'#888' }}>{a.label}</span>
+                  <div className="esd-brand"><span className="esd-es">ES</span><span className="esd-design-a">DESIGN</span></div>
+                  <div className="esd-sub" style={{ color:'#888' }}>{a.school}</div>
+                  <div className="esd-bb">{a.platform}</div>
+                  <div className="esd-section">{a.sectionTitle}</div>
+                  <div style={{ fontSize:'12px', fontWeight:500, color:'var(--ink)', fontFamily:'var(--roboto)' }}>{a.emailLabel}</div>
+                  <div className="esd-field esd-field-a">{a.emailPh}</div>
+                  <div style={{ fontSize:'12px', fontWeight:500, color:'var(--ink)', fontFamily:'var(--roboto)' }}>{a.passLabel}</div>
+                  <div className="esd-field esd-field-a">{a.passPh}</div>
+                  <div className="esd-forgot">{a.forgot}</div>
+                  <div className="esd-btn esd-btn-a">{a.loginBtn}</div>
+                  <div className="esd-check-tag">{a.check}</div>
+                </div>
+              </div>
             </div>
           </div>
         </section>

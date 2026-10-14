@@ -12,8 +12,8 @@ const CSS = `
     --paper: #EFEBE1;
     --dark: #11151D;
     --display: 'Bricolage Grotesque', sans-serif;
-    --body: 'Space Grotesk', sans-serif;
-    --mono: 'Space Mono', monospace;
+    --body: 'Satoshi', sans-serif;
+    --mono: 'Hubot Sans', sans-serif;
     background: var(--paper);
     color: var(--ink);
     font-family: var(--body);
@@ -47,15 +47,25 @@ const CSS = `
   }
   .br-nav-links a:hover { color: var(--acc); }
   .br-lang {
-    display: flex; align-items: center;
-    border: 2px solid var(--ink);
+    display: flex; align-items: center; position: relative;
+    background: #e0dbd0; border-radius: 20px; padding: 3px;
   }
+  .br-lang-slider {
+    position: absolute; top: 3px; bottom: 3px;
+    width: calc(50% - 3px); border-radius: 16px;
+    background: var(--ink);
+    transition: transform .25s cubic-bezier(.4,0,.2,1);
+    pointer-events: none;
+  }
+  .br-lang[data-lang="en"] .br-lang-slider { transform: translateX(100%); }
   .br-lang-btn {
+    position: relative; z-index: 1;
     background: transparent; border: none; cursor: pointer;
     font-family: var(--mono); font-size: 11px; letter-spacing: .08em;
-    padding: 5px 9px; color: var(--ink); transition: background .15s, color .15s;
+    padding: 4px 10px; border-radius: 16px;
+    color: var(--ink); transition: color .25s;
   }
-  .br-lang-btn.active { background: var(--ink); color: var(--paper); }
+  .br-lang-btn.active { color: var(--paper); }
 
   /* hamburger */
   .br-hamburger {
@@ -96,7 +106,7 @@ const CSS = `
   }
   .br-h1 {
     font-family: var(--display); font-weight: 800;
-    font-size: clamp(72px, 16vw, 240px);
+    font-size: clamp(56px, 10vw, 160px);
     line-height: .82; letter-spacing: -.045em; margin: 0; color: var(--ink);
   }
   .br-h1-line { display: block; overflow: hidden; }
@@ -109,13 +119,13 @@ const CSS = `
   .br-hero-uxlink {
     display: flex; align-items: center; justify-content: space-between;
     gap: 16px; margin-bottom: 18px; padding: 14px 16px;
-    border: 3px solid var(--ink);
+    border: 3px solid var(--ink); border-radius: 8px;
     text-decoration: none; color: var(--ink);
     position: relative; overflow: hidden;
   }
   .br-hero-uxlink::after {
     content: ''; position: absolute; inset: 0;
-    background: var(--ink); transform: translateX(-101%);
+    background: #E5402A; transform: translateX(-101%);
     transition: transform .3s cubic-bezier(.16,.84,.34,1);
     z-index: 0;
   }
@@ -142,7 +152,7 @@ const CSS = `
     display: inline-block; text-decoration: none;
     font-family: var(--mono); font-size: 13px; letter-spacing: .06em;
     text-transform: uppercase; background: var(--acc); color: var(--paper);
-    padding: 10px 18px; transform: rotate(-2deg);
+    padding: 10px 18px; border-radius: 6px; transform: rotate(-2deg);
     transition: transform .25s, background .2s;
   }
   .br-hero-cta:hover { transform: rotate(0) scale(1.04); background: #b57a08; }
@@ -150,7 +160,7 @@ const CSS = `
   /* ── MARQUEE ── */
   .br-marquee {
     border-bottom: 3px solid var(--ink); background: var(--acc);
-    overflow: hidden; white-space: nowrap; padding: 12px 0;
+    overflow: hidden; white-space: nowrap; padding: 6px 0;
   }
   .br-marquee-track {
     display: inline-flex; width: max-content;
@@ -158,8 +168,8 @@ const CSS = `
   }
   .br-marquee:hover .br-marquee-track { animation-play-state: paused; }
   .br-marquee-item {
-    font-family: var(--display); font-weight: 800; font-size: 38px;
-    color: var(--dark); padding: 0 26px; letter-spacing: -.01em;
+    font-family: var(--mono); font-weight: 400; font-size: 11px;
+    color: var(--dark); padding: 0 16px; letter-spacing: .12em;
   }
 
   /* ── FEATURED ── */
@@ -180,7 +190,7 @@ const CSS = `
   }
   .br-featured-name {
     font-family: var(--display); font-weight: 800;
-    font-size: clamp(56px, 9vw, 128px); line-height: .86;
+    font-size: clamp(40px, 5vw, 80px); line-height: .9;
     letter-spacing: -.03em; margin: 0 0 22px; color: var(--paper);
   }
   .br-featured-desc {
@@ -190,7 +200,7 @@ const CSS = `
   .br-featured-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; }
   .br-featured-chip {
     font-family: var(--mono); font-size: 11px; color: var(--paper);
-    border: 1.5px solid #3a3f4a; padding: 6px 12px;
+    border: 1.5px solid #3a3f4a; padding: 6px 12px; border-radius: 20px;
   }
   .br-featured-coming {
     display: inline-flex; align-items: center; gap: 10px;
@@ -240,12 +250,12 @@ const CSS = `
   .br-row:hover { background: var(--acc); color: var(--paper); padding-left: 56px; }
   .br-row-name {
     font-family: var(--display); font-weight: 700;
-    font-size: clamp(32px, 5vw, 60px); letter-spacing: -.025em; line-height: 1;
+    font-size: clamp(22px, 3vw, 38px); letter-spacing: -.025em; line-height: 1;
   }
   .br-row-right {
-    display: flex; align-items: center; gap: 18px;
-    font-family: var(--mono); font-size: 13px;
-    letter-spacing: .06em; text-transform: uppercase; white-space: nowrap;
+    display: flex; align-items: center; gap: 12px;
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; flex-shrink: 0;
   }
   .br-row-arrow { font-size: 22px; transition: transform .25s; }
   .br-row:hover .br-row-arrow { transform: translateX(8px); }
@@ -272,7 +282,7 @@ const CSS = `
   .br-contact-eyebrow { font-family: var(--mono); font-size: 13px; letter-spacing: .18em; text-transform: uppercase; color: var(--acc); margin-bottom: 24px; }
   .br-contact-headline {
     font-family: var(--display); font-weight: 800;
-    font-size: clamp(54px, 12vw, 180px); line-height: .82;
+    font-size: clamp(40px, 7vw, 96px); line-height: .88;
     letter-spacing: -.04em; margin: 0 0 48px; color: var(--paper);
   }
   .br-contact-bottom {
@@ -319,6 +329,7 @@ const CSS = `
     .br-featured-visual { padding: 40px 24px; min-height: 280px; }
     .br-index-header, .br-row { padding: 22px 24px; }
     .br-row:hover { padding-left: 36px; }
+    .br-row-right { display: none; }
     .br-skills-grid { grid-template-columns: 1fr; }
     .br-skill { border-right: none; border-bottom: 3px solid var(--ink); }
     .br-skill:last-child { border-bottom: none; }
@@ -441,7 +452,8 @@ export default function BrandingPage() {
           <li><a href="#contact">{t.nav.contact}</a></li>
         </ul>
         <div style={{ display:'flex', alignItems:'center', gap:16 }}>
-          <div className="br-lang">
+          <div className="br-lang" data-lang={lang}>
+            <span className="br-lang-slider" />
             <button className={`br-lang-btn${lang==='es'?' active':''}`} onClick={() => setLang('es')}>ES</button>
             <button className={`br-lang-btn${lang==='en'?' active':''}`} onClick={() => setLang('en')}>EN</button>
           </div>

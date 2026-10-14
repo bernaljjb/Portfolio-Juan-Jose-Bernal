@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { TransitionLink } from '@/components/TransitionLink';
 import { useLanguage } from '@/context/LanguageContext';
 
 // ─── CSS ─────────────────────────────────────────────────────────────────────
@@ -12,8 +13,8 @@ const CSS = `
     --paper: #EFEBE1;
     --dark: #11151D;
     --display: 'Bricolage Grotesque', sans-serif;
-    --body: 'Space Grotesk', sans-serif;
-    --mono: 'Space Mono', monospace;
+    --body: 'Satoshi', sans-serif;
+    --mono: 'Hubot Sans', sans-serif;
     background: var(--paper);
     color: var(--ink);
     font-family: var(--body);
@@ -642,12 +643,12 @@ export default function HabitaCaseStudy() {
 
         {/* ── NAV ── */}
         <nav className="hb-nav">
-          <Link href="/#projects" className="hb-back">
+          <TransitionLink href="/" className="hb-back">
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
               <path d="M13 8H3M7 4L3 8l4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
             {t.nav.back}
-          </Link>
+          </TransitionLink>
           <div className="hb-nav-right">
             <img src="/Images/LogoJJB/Logo%20JJB%20negro.png" alt="JJB" className="hb-nav-logo" />
             <div className="hb-lang">

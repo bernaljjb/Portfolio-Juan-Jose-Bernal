@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
+import { TransitionLink } from '@/components/TransitionLink';
 
 const CSS = `
   .jjb {
@@ -685,9 +686,9 @@ export default function Home() {
             <div className="jjb-featured-chips">
               {t.featured.chips.map(c => <span key={c} className="jjb-featured-chip">{c}</span>)}
             </div>
-            <Link href="/projects/habita" className="jjb-featured-link">
+            <TransitionLink href="/projects/habita" className="jjb-featured-link">
               <span>{t.featured.cta}</span><span>→</span>
-            </Link>
+            </TransitionLink>
           </div>
           <div className="jjb-featured-visual">
             <div className="jjb-featured-glow" />
@@ -713,13 +714,13 @@ export default function Home() {
         </div>
         {t.index.rows.map((row) =>
           row.href ? (
-            <Link key={row.name} href={row.href} className="jjb-row">
+            <TransitionLink key={row.name} href={row.href} className="jjb-row">
               <span className="jjb-row-name">{row.name}</span>
               <span className="jjb-row-right">
                 <span>{row.meta}</span>
                 <span className="jjb-row-arrow">→</span>
               </span>
-            </Link>
+            </TransitionLink>
           ) : (
             <div key={row.name} className="jjb-row jjb-row-muted">
               <span className="jjb-row-name">{row.name}</span>

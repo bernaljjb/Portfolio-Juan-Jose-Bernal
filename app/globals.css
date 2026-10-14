@@ -44,6 +44,16 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+@keyframes pageCover {
+  from { transform: perspective(1400px) rotateY(90deg); }
+  to   { transform: perspective(1400px) rotateY(0deg); }
+}
+
+@keyframes pageReveal {
+  from { transform: perspective(1400px) rotateY(0deg); }
+  to   { transform: perspective(1400px) rotateY(-90deg); }
+}
+
 @keyframes ticker-scroll {
   0% {
     transform: translateX(0);
