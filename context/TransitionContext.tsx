@@ -22,16 +22,18 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
 
     setPhase('covering');
 
+    // 550ms = animation duration. Navigate at peak (page fully flat).
     setTimeout(() => {
       router.push(href);
+      // Small gap so new page has time to render before revealing
       setTimeout(() => {
         setPhase('revealing');
         setTimeout(() => {
           setPhase('idle');
           busy.current = false;
-        }, 520);
-      }, 60);
-    }, 520);
+        }, 600);
+      }, 80);
+    }, 550);
   }, [router]);
 
   return (
@@ -43,29 +45,45 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
   );
 }
 
+// Wrapper provides the perspective so the child's rotateY has real 3D depth
+const wrapStyle: React.CSSProperties = {
+  position: 'fixed', inset: 0, zIndex: 500,
+  perspective: '1400px',
+  perspectiveOrigin: '50% 50%',
+  pointerEvents: 'all',
+};
+
+// Paper gradient: slightly darker at edges, lighter in the middle — simulates a curved page
+const paperBg =
+  'linear-gradient(to right, rgba(0,0,0,0.06) 0%, #F0EAE0 8%, #F6F1EA 50%, #F0EAE0 92%, rgba(0,0,0,0.06) 100%)';
+
 function CoverPanel() {
   return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 500,
-      background: '#F0EAE0',
-      // Shadow on the left edge simulates the page spine/fold
-      boxShadow: '-6px 0 24px rgba(0,0,0,0.35)',
-      animation: 'pageCover 0.5s cubic-bezier(0.86,0,0.07,1) forwards',
-      pointerEvents: 'all',
-    }} />
+    <div style={wrapStyle}>
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: paperBg,
+        transformOrigin: 'right center',
+        // Shadow on the LEFT edge = spine shadow as page swings in from the right
+        boxShadow: '-10px 0 30px rgba(0,0,0,0.4)',
+        animation: 'pageCoverInner 0.55s cubic-bezier(0.4,0,0.2,1) forwards',
+      }} />
+    </div>
   );
 }
 
 function RevealPanel() {
   return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 500,
-      background: '#F0EAE0',
-      // Shadow on the right edge as the page slides away
-      boxShadow: '6px 0 24px rgba(0,0,0,0.35)',
-      animation: 'pageReveal 0.5s cubic-bezier(0.86,0,0.07,1) forwards',
-      pointerEvents: 'all',
-    }} />
+    <div style={wrapStyle}>
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: paperBg,
+        transformOrigin: 'left center',
+        // Shadow on the RIGHT edge = spine shadow as page swings away to the left
+        boxShadow: '10px 0 30px rgba(0,0,0,0.4)',
+        animation: 'pageRevealInner 0.55s cubic-bezier(0.4,0,0.2,1) forwards',
+      }} />
+    </div>
   );
 }
 

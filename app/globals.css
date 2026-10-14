@@ -44,16 +44,16 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Page sweeps in from right — like turning a magazine page forward */
-@keyframes pageCover {
-  from { transform: translateX(102%); }
-  to   { transform: translateX(0%); }
+/* Inner page rotates around its right edge — sweeps in like a book page turning */
+@keyframes pageCoverInner {
+  from { transform: rotateY(-90deg); }
+  to   { transform: rotateY(0deg); }
 }
 
-/* Page continues left, revealing new content underneath */
-@keyframes pageReveal {
-  from { transform: translateX(0%); }
-  to   { transform: translateX(-102%); }
+/* Inner page rotates around its left edge — sweeps away to the left */
+@keyframes pageRevealInner {
+  from { transform: rotateY(0deg); }
+  to   { transform: rotateY(90deg); }
 }
 
 @keyframes ticker-scroll {
