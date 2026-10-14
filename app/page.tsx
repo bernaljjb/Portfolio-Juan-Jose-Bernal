@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
@@ -363,10 +363,80 @@ const CSS = `
     color: #7c8190;
   }
 
+  /* ── INTRO ── */
+  .jjb-intro {
+    position: fixed; inset: 0; z-index: 300;
+    display: flex; overflow: hidden;
+    cursor: pointer;
+  }
+  .jjb-intro-half {
+    flex: 1; height: 100%;
+    background: #0d0d0b;
+    position: relative; overflow: hidden;
+    transition: transform 1.15s cubic-bezier(.77,0,.175,1);
+  }
+  .jjb-intro-half-l {
+    transform-origin: right center;
+    border-right: 1px solid rgba(255,255,255,.05);
+  }
+  .jjb-intro-half-r { transform-origin: left center; }
+  .jjb-intro.opening .jjb-intro-half-l {
+    transform: perspective(1400px) rotateY(-108deg);
+  }
+  .jjb-intro.opening .jjb-intro-half-r {
+    transform: perspective(1400px) rotateY(108deg);
+  }
+  .jjb-intro-content {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .jjb-intro-content-l { align-items: flex-end; text-align: right; padding: 60px 40px 60px 60px; }
+  .jjb-intro-content-r { align-items: flex-start; text-align: left; padding: 60px 60px 60px 40px; }
+  .jjb-intro-issue {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .22em;
+    text-transform: uppercase; color: #E5402A;
+    margin-bottom: 48px; display: block;
+  }
+  .jjb-intro-big {
+    font-family: var(--display); font-weight: 800;
+    font-size: clamp(52px, 8vw, 118px);
+    line-height: .86; letter-spacing: -.04em; color: #fff; margin: 0;
+  }
+  .jjb-intro-sub {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .22em;
+    text-transform: uppercase; color: rgba(255,255,255,.3);
+    margin-top: 36px; display: block;
+  }
+  .jjb-intro-loc {
+    font-family: var(--mono); font-size: 9px; letter-spacing: .16em;
+    text-transform: uppercase; color: rgba(255,255,255,.15);
+    margin-top: 10px; display: block;
+  }
+  .jjb-intro-hint {
+    position: absolute; bottom: 40px; left: 0; right: 0; text-align: center;
+    font-family: var(--mono); font-size: 9px; letter-spacing: .2em;
+    text-transform: uppercase; color: rgba(255,255,255,.18);
+    animation: jjbBlink 2s ease-in-out infinite;
+  }
+  .jjb-intro-rule {
+    position: absolute; top: 10%; bottom: 10%; width: 1px;
+    background: rgba(255,255,255,.06);
+  }
+  .jjb-intro-rule-l { right: 30px; }
+  .jjb-intro-rule-r { left: 30px; }
+  .jjb-intro-num {
+    position: absolute; bottom: 40px;
+    font-family: var(--mono); font-size: 9px; letter-spacing: .12em;
+    color: rgba(255,255,255,.1);
+  }
+  .jjb-intro-num-l { left: 40px; }
+  .jjb-intro-num-r { right: 40px; }
+
   /* ── ANIMATIONS ── */
   @keyframes jjbRise { from { transform: translateY(115%); } to { transform: translateY(0); } }
   @keyframes jjbFade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
   @keyframes jjbMarq  { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @keyframes jjbBlink { 0%,100% { opacity: .18; } 50% { opacity: .55; } }
 
   /* ── MOBILE ── */
   @media (max-width: 768px) {
@@ -395,6 +465,68 @@ const CSS = `
 export default function Home() {
   const { lang: language, setLang: setLanguage } = useLanguage();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [introPhase, setIntroPhase] = useState<'cover' | 'opening' | 'done'>('cover');
+  const introFired = useRef(false);
+
+  function playPageFlip() {
+    try {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const dur = 0.38;
+      const buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * dur), ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) {
+        const t = i / d.length;
+        const env = Math.pow(1 - t, 1.4) * (t < 0.04 ? t / 0.04 : 1);
+        d[i] = (Math.random() * 2 - 1) * env;
+      }
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      const hp = ctx.createBiquadFilter();
+      hp.type = 'highpass'; hp.frequency.value = 500;
+      const bp = ctx.createBiquadFilter();
+      bp.type = 'bandpass'; bp.frequency.value = 2800; bp.Q.value = 0.6;
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.38, ctx.currentTime);
+      src.connect(hp); hp.connect(bp); bp.connect(gain); gain.connect(ctx.destination);
+      src.start();
+      setTimeout(() => ctx.close(), 1200);
+    } catch (_) {}
+  }
+
+  function playTick() {
+    try {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1100, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(380, ctx.currentTime + 0.045);
+      gain.gain.setValueAtTime(0.038, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.065);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(); osc.stop(ctx.currentTime + 0.1);
+      setTimeout(() => ctx.close(), 300);
+    } catch (_) {}
+  }
+
+  function openIntro() {
+    if (introFired.current) return;
+    introFired.current = true;
+    playPageFlip();
+    setIntroPhase('opening');
+    setTimeout(() => setIntroPhase('done'), 1250);
+  }
+
+  useEffect(() => {
+    if (sessionStorage.getItem('jjb-intro')) { setIntroPhase('done'); return; }
+    const t = setTimeout(() => { openIntro(); sessionStorage.setItem('jjb-intro', '1'); }, 1900);
+    return () => clearTimeout(t);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const T = {
     es: {
@@ -489,6 +621,36 @@ export default function Home() {
   return (
     <div className="jjb">
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
+
+      {/* INTRO MAGAZINE COVER */}
+      {introPhase !== 'done' && (
+        <div
+          className={`jjb-intro${introPhase === 'opening' ? ' opening' : ''}`}
+          onClick={openIntro}
+          role="button"
+          aria-label="Abrir portfolio"
+        >
+          <div className="jjb-intro-half jjb-intro-half-l">
+            <div className="jjb-intro-content jjb-intro-content-l">
+              <span className="jjb-intro-issue">Issue 01 &nbsp;·&nbsp; 2025</span>
+              <div className="jjb-intro-big">JUAN<br />JOSÉ</div>
+              <span className="jjb-intro-sub">UX / UI &nbsp;·&nbsp; Product</span>
+            </div>
+            <div className="jjb-intro-rule jjb-intro-rule-l" />
+            <span className="jjb-intro-num jjb-intro-num-l">JJB — 01</span>
+          </div>
+          <div className="jjb-intro-half jjb-intro-half-r">
+            <div className="jjb-intro-content jjb-intro-content-r">
+              <div className="jjb-intro-big">BER<br />NAL</div>
+              <span className="jjb-intro-sub">Designer</span>
+              <span className="jjb-intro-loc">Bogotá · Colombia</span>
+            </div>
+            <div className="jjb-intro-rule jjb-intro-rule-r" />
+            <span className="jjb-intro-num jjb-intro-num-r">2025</span>
+            <span className="jjb-intro-hint">· toca para abrir ·</span>
+          </div>
+        </div>
+      )}
 
       {/* NAV */}
       <nav className="jjb-nav">
@@ -597,7 +759,7 @@ export default function Home() {
         </div>
         {t.index.rows.map((row) =>
           row.href ? (
-            <Link key={row.name} href={row.href} className="jjb-row">
+            <Link key={row.name} href={row.href} className="jjb-row" onMouseEnter={playTick} onClick={playPageFlip}>
               <span className="jjb-row-name">{row.name}</span>
               <span className="jjb-row-right">
                 <span>{row.meta}</span>
