@@ -655,13 +655,13 @@ export default function Home() {
             <span className="jjb-h1-line"><span className="jjb-h1-inner" style={{ animationDelay:'.24s', color:'var(--acc)' }}>BERNAL</span></span>
           </h1>
           <div className="jjb-hero-right">
-            <Link href="/branding" className="jjb-branding-card">
+            <TransitionLink href="/branding" className="jjb-branding-card">
               <div className="jjb-branding-card-left">
                 <span className="jjb-branding-card-label">{language === 'es' ? 'Identidad de marca' : 'Brand identity'}</span>
                 <span className="jjb-branding-card-name">BRANDING</span>
               </div>
               <span className="jjb-branding-card-arrow">→</span>
-            </Link>
+            </TransitionLink>
             <p className="jjb-hero-desc">{t.hero.desc}</p>
             <a href="#contact" className="jjb-hero-cta">{t.hero.cta}</a>
           </div>

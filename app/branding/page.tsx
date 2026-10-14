@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
+import { TransitionLink } from '@/components/TransitionLink';
 
 const CSS = `
   .br {
@@ -448,7 +449,7 @@ export default function BrandingPage() {
           <span className="br-nav-label">{t.nav.label}</span>
         </Link>
         <ul className="br-nav-links">
-          <li><Link href="/" style={{ textDecoration:'none', fontFamily:'var(--mono)', fontSize:12, letterSpacing:'.12em', textTransform:'uppercase', color:'var(--ink)', transition:'color .2s' }}>{t.nav.ux}</Link></li>
+          <li><TransitionLink href="/" style={{ textDecoration:'none', fontFamily:'var(--mono)', fontSize:12, letterSpacing:'.12em', textTransform:'uppercase', color:'var(--ink)', transition:'color .2s' }}>{t.nav.ux}</TransitionLink></li>
           <li><a href="#contact">{t.nav.contact}</a></li>
         </ul>
         <div style={{ display:'flex', alignItems:'center', gap:16 }}>
@@ -465,7 +466,7 @@ export default function BrandingPage() {
 
       {/* MOBILE OVERLAY */}
       <div className={`br-overlay${menuOpen ? ' open' : ''}`}>
-        <Link href="/" onClick={() => setMenuOpen(false)}>{t.nav.ux}</Link>
+        <TransitionLink href="/" onClick={() => setMenuOpen(false)}>{t.nav.ux}</TransitionLink>
         <a href="#contact" onClick={() => setMenuOpen(false)}>{t.nav.contact}</a>
       </div>
 
@@ -482,13 +483,13 @@ export default function BrandingPage() {
             <span className="br-h1-line"><span className="br-h1-inner acc" style={{ animationDelay:'.16s' }}>BERNAL</span></span>
           </h1>
           <div className="br-hero-right">
-            <Link href="/" className="br-hero-uxlink">
+            <TransitionLink href="/" className="br-hero-uxlink">
               <div>
                 <span className="br-hero-uxlink-label">{t.hero.uxLabel}</span>
                 <span className="br-hero-uxlink-name">{t.hero.uxName}</span>
               </div>
               <span className="br-hero-uxlink-arrow">←</span>
-            </Link>
+            </TransitionLink>
             <p className="br-hero-desc">{t.hero.desc}</p>
             <a href="#contact" className="br-hero-cta">{t.hero.cta}</a>
           </div>
@@ -542,10 +543,10 @@ export default function BrandingPage() {
         </div>
         {t.index.rows.map((row, i) =>
           row.href ? (
-            <Link key={i} href={row.href} className="br-row">
+            <TransitionLink key={i} href={row.href} className="br-row">
               <span className="br-row-name">{row.name}</span>
               <span className="br-row-right"><span>{row.meta}</span><span className="br-row-arrow">→</span></span>
-            </Link>
+            </TransitionLink>
           ) : (
             <div key={i} className="br-row br-row-muted">
               <span className="br-row-name">{row.name}</span>

@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
+import { TransitionLink } from '@/components/TransitionLink';
 
 const CSS = `
   :root {
@@ -194,12 +195,12 @@ export default function NurishPage() {
 
       {/* NAV */}
       <nav className="nu-nav">
-        <Link href="/branding" className="nu-back">
+        <TransitionLink href="/branding" className="nu-back">
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
             <path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
           {es ? 'Portafolio de branding' : 'Branding portfolio'}
-        </Link>
+        </TransitionLink>
         <div className="nu-nav-right">
           <img src="/Images/LogoJJB/Logo%20JJB%20negro.png" alt="JJB" className="nu-nav-logo" />
           <div className="nu-lang">
@@ -381,13 +382,13 @@ export default function NurishPage() {
       </section>
 
       {/* NEXT */}
-      <Link href="/branding" className="nu-next">
+      <TransitionLink href="/branding" className="nu-next">
         <div>
           <span className="nu-next-label">{es ? 'Volver al portafolio' : 'Back to portfolio'}</span>
           <span className="nu-next-name">BRANDING →</span>
         </div>
         <span className="nu-next-arrow">←</span>
-      </Link>
+      </TransitionLink>
     </div>
   );
 }
