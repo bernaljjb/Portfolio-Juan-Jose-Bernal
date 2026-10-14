@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
@@ -468,55 +468,9 @@ export default function Home() {
   const [introPhase, setIntroPhase] = useState<'cover' | 'opening' | 'done'>('cover');
   const introFired = useRef(false);
 
-  function playPageFlip() {
-    try {
-      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-      if (!AudioCtx) return;
-      const ctx = new AudioCtx();
-      const dur = 0.38;
-      const buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * dur), ctx.sampleRate);
-      const d = buf.getChannelData(0);
-      for (let i = 0; i < d.length; i++) {
-        const t = i / d.length;
-        const env = Math.pow(1 - t, 1.4) * (t < 0.04 ? t / 0.04 : 1);
-        d[i] = (Math.random() * 2 - 1) * env;
-      }
-      const src = ctx.createBufferSource();
-      src.buffer = buf;
-      const hp = ctx.createBiquadFilter();
-      hp.type = 'highpass'; hp.frequency.value = 500;
-      const bp = ctx.createBiquadFilter();
-      bp.type = 'bandpass'; bp.frequency.value = 2800; bp.Q.value = 0.6;
-      const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0.38, ctx.currentTime);
-      src.connect(hp); hp.connect(bp); bp.connect(gain); gain.connect(ctx.destination);
-      src.start();
-      setTimeout(() => ctx.close(), 1200);
-    } catch (_) {}
-  }
-
-  function playTick() {
-    try {
-      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-      if (!AudioCtx) return;
-      const ctx = new AudioCtx();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(1100, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(380, ctx.currentTime + 0.045);
-      gain.gain.setValueAtTime(0.038, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.065);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(); osc.stop(ctx.currentTime + 0.1);
-      setTimeout(() => ctx.close(), 300);
-    } catch (_) {}
-  }
-
   function openIntro() {
     if (introFired.current) return;
     introFired.current = true;
-    playPageFlip();
     setIntroPhase('opening');
     setTimeout(() => setIntroPhase('done'), 1250);
   }
@@ -759,7 +713,7 @@ export default function Home() {
         </div>
         {t.index.rows.map((row) =>
           row.href ? (
-            <Link key={row.name} href={row.href} className="jjb-row" onMouseEnter={playTick} onClick={playPageFlip}>
+            <Link key={row.name} href={row.href} className="jjb-row">
               <span className="jjb-row-name">{row.name}</span>
               <span className="jjb-row-right">
                 <span>{row.meta}</span>
