@@ -1,19 +1,15 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback, useRef } from 'react';
+import React, { createContext, useContext, useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
-type Phase = 'idle' | 'covering' | 'covered' | 'revealing';
+type Phase = 'idle' | 'covering' | 'revealing';
 
 interface TransitionCtx {
   navigateTo: (href: string) => void;
-  phase: Phase;
 }
 
-const TransitionContext = createContext<TransitionCtx>({
-  navigateTo: () => {},
-  phase: 'idle',
-});
+const TransitionContext = createContext<TransitionCtx>({ navigateTo: () => {} });
 
 export function TransitionProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -24,42 +20,58 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
     if (busy.current) return;
     busy.current = true;
 
+    // 1. Mount the cover panel — animate in from right edge
     setPhase('covering');
+
     setTimeout(() => {
-      setPhase('covered');
+      // 2. Navigate while panel is fully visible
       router.push(href);
+
       setTimeout(() => {
+        // 3. Swap to reveal panel — animate out to left edge
         setPhase('revealing');
+
         setTimeout(() => {
           setPhase('idle');
           busy.current = false;
-        }, 650);
-      }, 80);
-    }, 550);
+        }, 700);
+      }, 100);
+    }, 600);
   }, [router]);
 
   return (
-    <TransitionContext.Provider value={{ navigateTo, phase }}>
+    <TransitionContext.Provider value={{ navigateTo }}>
       {children}
-      <PageTurnOverlay phase={phase} />
+      {phase === 'covering' && <CoverPanel />}
+      {phase === 'revealing' && <RevealPanel />}
     </TransitionContext.Provider>
   );
 }
 
-function PageTurnOverlay({ phase }: { phase: Phase }) {
-  if (phase === 'idle') return null;
+const PANEL_STYLE: React.CSSProperties = {
+  position: 'fixed', inset: 0, zIndex: 500,
+  // Off-white like magazine paper — contrasts against the dark pages so the 3D flip is visible
+  background: '#F2EDE4',
+  pointerEvents: 'all',
+};
+
+function CoverPanel() {
   return (
-    <div
-      style={{
-        position: 'fixed', inset: 0, zIndex: 500,
-        background: '#0E0E0C',
-        transformOrigin: phase === 'covering' ? 'right center' : 'left center',
-        animation: phase === 'covering' || phase === 'covered'
-          ? 'pageCover 0.55s cubic-bezier(.77,0,.175,1) forwards'
-          : 'pageReveal 0.65s cubic-bezier(.77,0,.175,1) forwards',
-        pointerEvents: 'all',
-      }}
-    />
+    <div style={{
+      ...PANEL_STYLE,
+      transformOrigin: 'right center',
+      animation: 'pageCover 0.6s cubic-bezier(.77,0,.175,1) forwards',
+    }} />
+  );
+}
+
+function RevealPanel() {
+  return (
+    <div style={{
+      ...PANEL_STYLE,
+      transformOrigin: 'left center',
+      animation: 'pageReveal 0.7s cubic-bezier(.77,0,.175,1) forwards',
+    }} />
   );
 }
 
