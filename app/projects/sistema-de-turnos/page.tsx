@@ -167,9 +167,9 @@ const CSS = `
   .st-atomic-block { padding: 40px 32px; border-bottom: 3px solid var(--ink); display: flex; flex-direction: column; justify-content: center; }
   .st-atomic-block:last-child { border-bottom: none; }
   .st-atomic-img-col { padding: 0; display: flex; align-items: flex-start; }
-  .st-atomic-img-wrap { position: sticky; top: 80px; width: 100%; border: 3px solid var(--ink); max-height: calc(100vh - 120px); overflow: hidden; }
-  .st-atomic-img-inner { position: relative; height: 100%; }
-  .st-atomic-img-inner img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+  .st-atomic-img-wrap { position: sticky; top: 80px; width: 100%; border: 3px solid var(--ink); }
+  .st-atomic-img-inner { position: relative; }
+  .st-atomic-img-inner img { width: 100%; max-height: calc(100vh - 120px); object-fit: contain; display: block; }
   .st-atomic-overlay { position: absolute; inset: 0; pointer-events: none; }
   .st-atomic-overlay-strip {
     position: absolute; left: 0; right: 0;
