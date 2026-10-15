@@ -688,7 +688,7 @@ export default function SistemaDeTurnosPage() {
                       ))}
                     </div>
                   </div>
-                  <div className="ph-cta ph-cta-active">{ph.btnConfirm || 'Confirmar turno'}</div>
+                  <div className="ph-cta ph-cta-active">{'Confirmar turno'}</div>
                   <div className="ph-note">{ph.note}</div>
                 </div>
               </div>

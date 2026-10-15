@@ -584,8 +584,8 @@ function useObserver(ref: React.RefObject<Element | null>) {
 }
 
 export default function PruebasUsabilidad() {
-  const { language, setLanguage } = useLanguage();
-  const t = content[language as 'es' | 'en'] ?? content.es;
+  const { lang, setLang } = useLanguage();
+  const t = content[lang as 'es' | 'en'] ?? content.es;
 
   const heroRef = useRef<HTMLDivElement>(null);
   const infoRef = useRef<HTMLDivElement>(null);
@@ -616,8 +616,8 @@ export default function PruebasUsabilidad() {
         </TransitionLink>
         <div className="pu-nav-right">
           <div className="pu-lang">
-            <button className={`pu-lang-btn${language === 'es' ? ' active' : ''}`} onClick={() => setLanguage('es')}>ES</button>
-            <button className={`pu-lang-btn${language === 'en' ? ' active' : ''}`} onClick={() => setLanguage('en')}>EN</button>
+            <button className={`pu-lang-btn${lang === 'es' ? ' active' : ''}`} onClick={() => setLang('es')}>ES</button>
+            <button className={`pu-lang-btn${lang === 'en' ? ' active' : ''}`} onClick={() => setLang('en')}>EN</button>
           </div>
         </div>
       </nav>
